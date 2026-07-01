@@ -16,4 +16,4 @@ use 'bun run --bun vite build'
 how 2 get pulsar to build:
 1. clone pulsar in same folder
 2. in package.json, add "workspaces": ["packages/*"],
-3. build should work
+3. build should work, files in dist folder
