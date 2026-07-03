@@ -55,8 +55,20 @@ async function main() {
 
     frame.go(url);
   });
-}
 
+  setInterval(() => {
+    // Source - https://stackoverflow.com/a/938195
+    // Posted by kkyy, modified by community. See post 'Timeline' for change history
+    // Retrieved 2026-07-02, License - CC BY-SA 3.0
+    const href = iframe.contentWindow?.location.href;
+    if (!href) return;
+
+    const idx = href.indexOf(config.prefix);
+    if (idx === -1) return;
+
+    urlInput.value = decodeURIComponent(href.slice(idx + config.prefix.length));
+  }, 1000);
+}
 main().catch((err) => {
   document.body.innerHTML = `<pre style="color:red;padding:1em">${err}</pre>`;
 });
