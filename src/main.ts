@@ -8,6 +8,12 @@ const forward = document.getElementById('forward') as HTMLButtonElement;
 back.addEventListener('click', () => iframe.contentWindow?.history.back());
 forward.addEventListener('click', () => iframe.contentWindow?.history.forward());
 
+function addToHistory(url: string): void {
+  const list: string[] = JSON.parse(localStorage.getItem('h') ?? '[]');
+  list.push(url);
+  localStorage.setItem('h', JSON.stringify(list));
+}
+
 function loadScript(src: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const s = document.createElement('script');
@@ -35,6 +41,7 @@ async function main() {
   const ctrl = new Controller({ serviceworker: sw, transport: new PulsarTransport() });
   await ctrl.wait();
   const frame = ctrl.createFrame(iframe);
+  let lastUrl: string | undefined;
 
   urlInput.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter') return;
@@ -57,16 +64,19 @@ async function main() {
   });
 
   setInterval(() => {
-    // Source - https://stackoverflow.com/a/938195
-    // Posted by kkyy, modified by community. See post 'Timeline' for change history
-    // Retrieved 2026-07-02, License - CC BY-SA 3.0
     const href = iframe.contentWindow?.location.href;
     if (!href) return;
 
     const idx = href.indexOf(config.prefix);
     if (idx === -1) return;
 
-    urlInput.value = decodeURIComponent(href.slice(idx + config.prefix.length));
+    const url = decodeURIComponent(href.slice(idx + config.prefix.length));
+    urlInput.value = url;
+
+    if (url !== lastUrl) {
+      lastUrl = url;
+      addToHistory(url);
+    }
   }, 1000);
 }
 main().catch((err) => {
