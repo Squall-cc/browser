@@ -2,6 +2,11 @@ import { PulsarTransport } from './tunnel';
 
 const urlInput = document.getElementById('url') as HTMLInputElement;
 const iframe = document.getElementById('frame') as HTMLIFrameElement;
+const back = document.getElementById('back') as HTMLButtonElement;
+const forward = document.getElementById('forward') as HTMLButtonElement;
+//https://stackoverflow.com/questions/3254985/back-and-forward-buttons-in-an-iframe
+back.addEventListener('click', () => iframe.contentWindow?.history.back());
+forward.addEventListener('click', () => iframe.contentWindow?.history.forward());
 
 function loadScript(src: string): Promise<void> {
   return new Promise((resolve, reject) => {
